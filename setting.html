@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings Page</title>
+        <link rel="stylesheet" href="css/all.min.css" />
+        <link rel="stylesheet" href="css/setting.css" />
+    </head>
+    <body>
+        <div class="nav">
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i>
+                Aura
+            </a>
+            <a href="#stats">
+                <i class="fa-solid fa-chart-column"></i>
+                Statistics
+            </a>
+            <a href="#books">
+                <i class="fa-solid fa-book-open"></i>
+                Books
+            </a>
+        </div>
+        <div class="container">
+            <h1>Statistics</h1>
+            <div class="stats" id="stats">
+                <div class="card">
+                    <i class="fa-solid fa-2x fa-user-tie"></i>
+                    <span class="stat-num" id="numAuthors"></span>
+                    <span>Authors</span>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-2x fa-book"></i>
+                    <span class="stat-num" id="numBooks"></span>
+                    <span>Books</span>
+                </div>
+                <div class="card">
+                    <h2>Authors list:</h2>
+                    <div id="authorsList"></div>
+                </div>
+            </div>
+            <h1>Books list:</h1>
+            <div class="box">
+                <div class="updateBox">
+                    <div></div>
+                    <i class="fa-solid fa-xmark close"></i>
+                    <label for="title">Title: </label>
+                    <input type="text" id="title" />
+                    <label for="author">Author: </label>
+                    <input type="text" id="author" />
+                    <label for="year">Publication year: </label>
+                    <input type="date" id="year" />
+                    <button>Validate</button>
+                </div>
+                <div class="status"></div>
+                <div id="books"></div>
+                <button>Delete all</button>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                fetchStats();
+                fetchBooks();
+
+                $(".box #books + button").click(function () {
+                    $.ajax({
+                        url: "php/update.php",
+                        method: "post",
+                        data: { deleteAll: true },
+                        success: function (data) {
+                            displayStatus(data);
+                            fetchBooks();
+                            fetchStats();
+                        },
+                    });
+                });
+            });
+
+            function fetchStats() {
+                $.ajax({
+                    url: "php/stats.php",
+                    method: "GET",
+                    success: handleStats,
+                });
+            }
+
+            function fetchBooks() {
+                $.ajax({
+                    url: "php/getBooks.php",
+                    method: "GET",
+                    success: handleBooks,
+                });
+            }
+
+            function handleBooks(data) {
+                $("#books").empty();
+
+                if (data == 1) {
+                    $("#books").html("<span>No Book Was Found!</span>");
+                    $(".box #books + button").hide();
+                } else {
+                    $(".box #books + button").show();
+                    const booksData = JSON.parse(data);
+
+                    booksData.forEach((book) => {
+                        const bookElement = `
+                <div class="book">
+                    <div>
+                        <span>${book.title}</span>
+                        <span>${book.author}</span>
+                    </div>
+                    <div>
+                        <button class="update" data-id="${book.id}">update</button>
+                        <button class="delete" data-id="${book.id}">delete</button>
+                    </div>
+                </div>
+            `;
+                        $("#books").append(bookElement);
+                    });
+
+                    $(".update").off("click").on("click", handleUpdateClick);
+                    $(".delete").off("click").on("click", handleDeleteClick);
+                }
+            }
+
+            function handleUpdateClick() {
+                const idUpdate = $(this).data("id");
+                const bookDetails = $(this).parent().siblings().children();
+
+                $(".updateBox #title").val(bookDetails.first().text());
+                $(".updateBox #author").val(bookDetails.last().text());
+                $(".updateBox #year").val("");
+
+                $(".updateBox > div").html(`<h3>Updating id-${idUpdate}</h3>`);
+                $(".updateBox").addClass("open");
+
+                $(".updateBox .close")
+                    .off("click")
+                    .on("click", function () {
+                        $(".updateBox").removeClass("open");
+                    });
+
+                $(".updateBox button")
+                    .off("click")
+                    .on("click", function () {
+                        const title = $("#title").val();
+                        const author = $("#author").val();
+                        const year = $("#year").val();
+
+                        if (title && author) {
+                            $.ajax({
+                                url: "php/update.php",
+                                method: "post",
+                                data: {
+                                    idUpdate,
+                                    title,
+                                    author,
+                                    year,
+                                },
+                                success: function (data) {
+                                    displayStatus(
+                                        data == 0
+                                            ? "Book already exists!"
+                                            : data
+                                    );
+                                    fetchBooks();
+                                    fetchStats();
+                                    $(".updateBox .close").click();
+                                },
+                            });
+                        }
+                    });
+            }
+
+            function handleDeleteClick() {
+                const idDelete = $(this).data("id");
+
+                $.ajax({
+                    url: "php/update.php",
+                    method: "post",
+                    data: { idDelete },
+                    success: function (data) {
+                        displayStatus(data);
+                        fetchBooks();
+                        fetchStats();
+                    },
+                });
+            }
+
+            function handleStats(data) {
+                const statsData = JSON.parse(data);
+                $("#numAuthors").html(statsData.numAuth);
+                $("#numBooks").html(statsData.numBook);
+
+                if (statsData.list == 1) {
+                    $(".stats .card h2").after(
+                        "<span>No Author Was Found!</span>"
+                    );
+                    $(".stats .card #authorsList").empty();
+                } else {
+                    const authorsList = `
+            <table>
+                <tr>
+                    <th>Author</th>
+                    <th>Publication number</th>
+                    <th>Oldest book</th>
+                    <th>Latest book</th>
+                </tr>
+            </table>
+        `;
+                    $(".stats .card #authorsList").html(authorsList);
+
+                    statsData.list.forEach((author) => {
+                        const authorRow = `
+                <tr>
+                    <td>${author.author}</td>
+                    <td>${author.numBooks}</td>
+                    <td>${author.oldestBook}</td>
+                    <td>${author.newestBook}</td>
+                </tr>
+            `;
+                        $(".stats .card table").append(authorRow);
+                    });
+                }
+            }
+
+            function displayStatus(message) {
+                $(".status").html(message).addClass("open");
+                setTimeout(() => $(".status").removeClass("open"), 1500);
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,627 @@
+@import url("https://fonts.googleapis.com/css2?family=Fjalla+One&family=Forum&display=swap");
+html {
+    scroll-behavior: smooth;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+::-webkit-scrollbar {
+    background-color: #e4e9f7;
+    border-left: 1px solid #ccc;
+    width: 0.7rem;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: #b197fc;
+}
+*::selection {
+    background-color: #9160c5;
+    color: white;
+}
+
+body {
+    font-family: "Fjalla One", sans-serif;
+}
+a {
+    text-decoration: none;
+}
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 78px;
+    background-color: #11101d;
+    padding: 6px 14px;
+    z-index: 99;
+    transition: all 0.5s ease;
+}
+
+.sidebar.open {
+    width: 250px;
+}
+
+.sidebar .logo-details {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.sidebar .logo-details .logo_name {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.sidebar.open .logo-details .logo_name {
+    opacity: 1;
+}
+
+.sidebar .logo-details #btn {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.sidebar.open .logo-details #btn {
+    text-align: right;
+}
+
+.sidebar .nav-list {
+    margin-top: 20px;
+    height: 100%;
+}
+
+.sidebar li {
+    position: relative;
+    margin: 8px 0;
+    list-style: none;
+}
+
+.sidebar.open input {
+    padding-left: 50px;
+}
+
+.sidebar li:not(.setting):has(span) a {
+    display: flex;
+    width: 100%;
+    border-radius: 12px;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    background-color: #1d1b31;
+}
+.sidebar li:not(.setting):has(span):hover a {
+    background-color: #fff !important;
+}
+.sidebar li .links_name {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 400;
+    white-space: nowrap;
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+    transition: 0.4s;
+}
+
+.sidebar.open li .links_name {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sidebar li:not(.setting):has(span):hover .links_name,
+.sidebar li:not(.setting):has(span):hover i {
+    transition: all 0.5s ease;
+    color: #11101d;
+}
+
+.sidebar i {
+    color: #fff;
+    min-width: 50px;
+    font-size: 28px;
+    text-align: center;
+    line-height: 60px;
+}
+
+.sidebar li i {
+    cursor: pointer;
+    line-height: 50px;
+    font-size: 18px;
+    border-radius: 12px;
+}
+
+.sidebar li.setting a {
+    position: fixed;
+    height: 60px;
+    width: 78px;
+    left: 0;
+    bottom: -8px;
+    padding: 10px 14px;
+    background-color: #1d1b31;
+    transition: all 0.5s ease;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar.open li.setting a {
+    width: 250px;
+}
+
+@media (max-width: 424px) {
+    .sidebar {
+        padding: 6px 8px 6px 0;
+        width: 58px;
+    }
+
+    .sidebar .logo-details .logo_name {
+        margin-left: 14px;
+    }
+
+    .sidebar li.setting a {
+        width: 58px;
+        padding: 10px 4px 10px 0;
+    }
+
+    body .container {
+        width: calc(100% - 58px);
+        margin-left: 58px;
+    }
+}
+
+.container {
+    width: calc(100% - 78px);
+    margin-left: 78px;
+    background-color: #e4e9f7;
+}
+
+.intro {
+    position: relative;
+    padding: 7em 0;
+    margin-bottom: 1rem;
+    color: white;
+    overflow: hidden;
+}
+.intro::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.6;
+    z-index: 1;
+    inset: 0;
+}
+.intro img {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    animation: grow linear;
+    animation-timeline: scroll(root);
+    transform-origin: right;
+}
+@keyframes grow {
+    to {
+        transform: scale(2.5);
+    }
+}
+.intro .content {
+    position: relative;
+    gap: 20px;
+    display: grid;
+    margin-left: 40px;
+}
+.intro h1 span {
+    color: #844dbe;
+    text-shadow: 0px 0px 20px black;
+}
+.intro p {
+    line-height: 30px;
+    width: 90%;
+}
+.intro *:not(.intro img) {
+    z-index: 2;
+}
+.holder {
+    padding: 20px;
+}
+.slider h1 {
+    margin-left: 20px;
+}
+.scroller {
+    overflow: hidden;
+    background-color: white;
+    margin-top: 15px;
+    border-radius: 10px;
+}
+@media (min-width: 1028px) {
+    .scroller {
+        margin-inline: 70px;
+    }
+}
+.scroller_inner {
+    display: flex;
+    list-style: none;
+    gap: 10px;
+    width: max-content;
+    padding: 40px 0;
+    margin: 0;
+    flex-wrap: nowrap;
+    animation: scroll 30s linear infinite;
+}
+.scroller_inner[data-direction="right"] {
+    animation-direction: reverse;
+}
+.scroller img {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    width: 150px;
+}
+@keyframes scroll {
+    to {
+        transform: translateX(calc(-50% - 5px));
+    }
+}
+@media (max-width: 600px) {
+    .scroller {
+        padding: 0 20px;
+    }
+    .scroller_inner {
+        padding: 20px 0;
+    }
+    .scroller img {
+        width: 100px;
+    }
+}
+.box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+.books {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 20px;
+}
+.holder .box .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.holder .box .options .searchBox {
+    position: relative;
+}
+.holder .options .bx-search,
+.holder .options .close {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 13px;
+}
+.holder .options .bx-search {
+    left: 0;
+}
+.holder .options .close {
+    right: 0;
+    display: none;
+}
+.holder .options input {
+    font-size: 15px;
+    color: #fff;
+    font-weight: 400;
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.5s ease;
+    background-color: #b197fc;
+    padding: 13px;
+    padding-left: 50px;
+}
+.holder .options input::placeholder {
+    color: #fff;
+}
+.holder .options .suggestions {
+    width: 100%;
+    position: absolute;
+    border-radius: 0 0 12px 12px;
+    background-color: #b197fc;
+    margin-top: -9px;
+    z-index: 99;
+    transition: 0.3s;
+}
+.holder .options .suggestions:has(.suggestion) {
+    padding-top: 10px;
+}
+.holder .options .suggestion {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid white;
+    color: white;
+    padding-block: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.holder .options .suggestion:last-of-type {
+    border-radius: 0 0 12px 12px;
+}
+.holder .options .suggestion:hover {
+    background-color: #9160c5;
+}
+.holder .options select {
+    padding: 10px;
+    border-radius: 5px;
+}
+.holder .options select optgroup {
+    color: #a2a7b5;
+}
+.holder .options select option {
+    color: initial;
+}
+.books .card {
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    gap: 10px;
+    border-radius: 8px;
+    background-color: #f3f3f3;
+    flex-direction: column;
+    transform: translate(-30px, -30px);
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+#book.revealed .card {
+    animation: reveal 1s forwards;
+    animation-delay: var(--card-delay);
+}
+
+@keyframes reveal {
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+.books .card img {
+    width: 150px;
+    height: 213px;
+    object-fit: cover;
+    margin: auto;
+    animation: show linear forwards;
+    animation-timeline: view();
+    animation-range-end: 400px;
+}
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.books .card .details {
+    display: flex;
+    flex-direction: column;
+    font-family: "Forum";
+    font-weight: bold;
+    text-transform: capitalize;
+    border-top: 2px solid #ccc;
+    padding-top: 5px;
+}
+
+.books .card .details .title {
+    font-size: 1.5em;
+    color: #9160c5;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.books .card .details .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #757575;
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+@media (max-width: 578px) {
+    .holder .books {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        column-gap: 10px;
+    }
+    .holder .box .options {
+        flex-direction: column;
+        align-items: baseline;
+        gap: 10px;
+    }
+    .holder .books .card {
+        padding: 10px;
+    }
+    .books .card img {
+        height: 8.5rem;
+        width: 6.5rem;
+    }
+    .books .card .details .title {
+        font-size: 1.2em;
+    }
+    .books .card .details .info {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 0.7em;
+    }
+}
+
+.box:not(:has(.books)) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.box:not(:has(.books)) input {
+    padding: 10px;
+    border-radius: 7px;
+    border: none;
+    background-color: #ccc;
+    width: 70%;
+}
+.box:not(:has(.books)) button {
+    background-color: #844dbe;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    width: fit-content;
+    font-weight: bold;
+    cursor: pointer;
+}
+.footer {
+    background-color: #11101d;
+    color: white;
+    text-align: center;
+    padding: 19px 10px;
+    font-size: 18px;
+    text-transform: capitalize;
+}
+.ftName {
+    font-weight: bold;
+    color: #10cab7;
+}
+@media (min-width: 891px) {
+    .intro p {
+        width: 61%;
+    }
+}
+.shake {
+    animation: shake 200ms 3;
+    background-color: red !important;
+    color: white;
+}
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+    33% {
+        transform: translateX(-10px);
+    }
+    66% {
+        transform: translateX(10px);
+    }
+}
+.status {
+    position: absolute;
+    z-index: 999;
+    background-color: #844dbe;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: "forum";
+    font-weight: bold;
+    right: -100%;
+    bottom: 10px;
+    transition: all 0.8s, opacity 0.3s;
+    opacity: 0;
+}
+.status.show {
+    opacity: 1;
+    right: 10px;
+}
+.scrollDown {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 70px;
+    border: 2px solid white;
+    border-radius: 10px;
+    color: white;
+}
+.scrollDown i {
+    animation: bounce 1s infinite;
+}
+.scrollDown:hover i {
+    animation-play-state: paused;
+}
+@keyframes bounce {
+    0%,
+    50%,
+    100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-0.5em);
+    }
+    57% {
+        transform: translateY(-0.125em);
+    }
+}
+.scrollTop {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    z-index: 500;
+    width: 60px;
+    height: auto;
+    cursor: pointer;
+    transition: 0.3s;
+    opacity: 0;
+    box-shadow: 0px 0px 4px 0px #9160c5;
+    width: 50px;
+    background-color: white;
+    border-radius: 50%;
+}
+.scrollTop:hover {
+    transform: scale(1.1);
+}
+.scrollTop img {
+    z-index: 501;
+    width: 100%;
+    height: 100%;
+}
+.scrollTop:hover img {
+    animation: go-up 1.2s infinite;
+}
+@keyframes go-up {
+    0% {
+        transform: translateY(0);
+    }
+    20% {
+        transform: translateY(-0.5em);
+    }
+    40% {
+        transform: translateY(0.3em);
+    }
+    60% {
+        transform: translateY(-0.7em);
+    }
+    80% {
+        transform: translateY(0.2em);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

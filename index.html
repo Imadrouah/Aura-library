@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Library</title>
+        <link rel="stylesheet" href="css/all.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <div class="scrollTop">
+            <img src="imgs/scrollTop.png" alt="scroll" />
+        </div>
+        <div class="sidebar">
+            <div class="logo-details">
+                <div class="logo_name">Aura</div>
+                <i class="fa-solid fa-bars" id="btn"></i>
+            </div>
+            <ul class="nav-list">
+                <li>
+                    <a href="#book">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span class="links_name">Book</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#register">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <span class="links_name">Upload</span>
+                    </a>
+                </li>
+                <li class="setting">
+                    <a href="setting.html"
+                        ><i class="fa-solid fa-gear"></i>
+                        <span class="links_name">Setting</span></a
+                    >
+                </li>
+            </ul>
+        </div>
+        <div class="container">
+            <div class="main">
+                <div class="intro">
+                    <img src="imgs/mythical library.jpg" alt="library" />
+                    <div class="content">
+                        <h1>Welcome to <span>Aura</span> library</h1>
+                        <p>
+                            your gateway to enchanting stories and imagination.
+                            Discover curated collections that inspire and
+                            transport you. Let Aura's essence guide your journey
+                            through literature. Start exploring with us today!
+                        </p>
+                    </div>
+                    <a href="#book" class="scrollDown">
+                        <i class="fa-solid fa-angles-down"></i>
+                    </a>
+                </div>
+                <div class="holder"></div>
+                <div class="holder">
+                    <h1>Books</h1>
+                    <div class="box" id="book">
+                        <div class="options">
+                            <div class="searchBox">
+                                <i
+                                    class="fa-solid fa-magnifying-glass bx-search"
+                                ></i>
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    id="search"
+                                    autocomplete="off"
+                                />
+                                <i class="fa-solid fa-xmark close"></i>
+                                <div class="suggestions"></div>
+                            </div>
+                            <select name="sort" id="sort">
+                                <optgroup label="Sort By">
+                                    <option selected value="title">
+                                        Book name
+                                    </option>
+                                    <option value="author">Author name</option>
+                                    <option value="publication_year">
+                                        Publication year
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="books"></div>
+                    </div>
+                </div>
+                <div class="holder">
+                    <h1>Library Updates</h1>
+                    <div class="box" id="register">
+                        <label for="title">Title: </label>
+                        <input
+                            type="text"
+                            id="title"
+                            required
+                            placeholder="Title"
+                        />
+                        <label for="author">Author: </label>
+                        <input
+                            type="text"
+                            id="author"
+                            required
+                            placeholder="Author"
+                        />
+                        <label for="year">Publication year: </label>
+                        <input type="date" id="year" required />
+                        <label for="pic">Upload book cover: </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="pic"
+                            name="image"
+                        />
+                        <button type="button" id="reg">Register</button>
+                        <div class="status"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                ©
+                <span class="ftName"><span class="year"></span> imad</span>
+                All Rights Reserved
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script>
+            function addCard(data) {
+                $(".books").html("");
+                if (data == 1) {
+                    $(".books").html("<span>No Book Was Found!</span>");
+                } else {
+                    let jsData = JSON.parse(data);
+                    jsData.forEach((e, i) => {
+                        let card = `
+                <div style="--card-delay: ${i * 100}ms;" class="card" id="book${
+                            e.id
+                        }">
+                    <img
+                        loading="lazy"
+                        class="bookImg"
+                        src="imgs/books/book${
+                            !e.pictype ? "-cover.png" : e.id + "." + e.pictype
+                        }"
+                        alt="book"
+                    />
+                    <div class="details">
+                        <span class="title">${e.title}</span>
+                        <div class="info">
+                            <span class="author">${e.author}</span>
+                            <span class="year">${e.year}</span>
+                        </div>
+                    </div>
+                </div>`;
+                        $(".books").append(card);
+                    });
+                }
+            }
+
+            function handleLiveSearch() {
+                $.ajax({
+                    url: "php/livesearch.php",
+                    method: "POST",
+                    data: {
+                        live: true,
+                        searchData: $("#search").val(),
+                    },
+                    success: function (data) {
+                        $(".suggestions").html("");
+                        if (data != 1) {
+                            let jsData = JSON.parse(data);
+                            jsData.forEach((e) => {
+                                $(".suggestions").append(`
+                        <div class="suggestion">
+                            <span class="title">${e.title}</span>
+                            <span class="author">${e.author}</span>
+                        </div>`);
+                            });
+                            $(".suggestion").click(function () {
+                                $("#search").val(
+                                    $(this).children().first().text()
+                                );
+                                $(".bx-search").click();
+                            });
+                        }
+                    },
+                });
+            }
+
+            function handleBookSearch() {
+                $(".suggestions").html("");
+                if ($("#search").val()) {
+                    $(".close").css("display", "block");
+                    $.ajax({
+                        url: "php/livesearch.php",
+                        method: "POST",
+                        data: {
+                            search: true,
+                            searchData: $("#search").val(),
+                            sort: $("#sort").val(),
+                        },
+                        success: addCard,
+                    });
+                }
+            }
+
+            function resetBookSearch() {
+                $(".close").css("display", "none");
+                $.ajax({
+                    url: "php/getBooks.php",
+                    method: "GET",
+                    data: { sort: $("#sort").val() },
+                    success: addCard,
+                });
+                $("#search").val("");
+            }
+
+            function handleSortChange() {
+                $.ajax({
+                    url: "php/getBooks.php",
+                    method: "GET",
+                    data: { sort: $("#sort").val() },
+                    success: addCard,
+                });
+            }
+
+            function slideShow(data) {
+                if (data != 1) {
+                    let jsData = JSON.parse(data);
+                    let filteredData = jsData.filter(
+                        (book) => book.pictype && book.pictype.trim() !== ""
+                    );
+
+                    if (filteredData.length >= 6) {
+                        $(".intro + .holder").html(`
+                <h1>Available Books</h1>
+                <div class="scroller">
+                    <div class="scroller_inner"></div>
+                </div>`);
+                    }
+
+                    filteredData.forEach((e) => {
+                        let card = `<img loading="lazy" src="imgs/books/book${e.id}.${e.pictype}" alt="book"/>`;
+                        $(".scroller .scroller_inner").append(card);
+                    });
+
+                    const holders =
+                        document.querySelectorAll(".scroller_inner");
+                    holders.forEach((el) => {
+                        const imgs = Array.from(el.children);
+                        imgs.forEach((element) => {
+                            let clone = element.cloneNode(true);
+                            el.appendChild(clone);
+                        });
+                    });
+                }
+            }
+
+            function shake(tag) {
+                tag.addClass("shake");
+                setTimeout(() => {
+                    tag.removeClass("shake");
+                }, 1000);
+            }
+
+            $(document).ready(function () {
+                $("#search").keyup(function (e) {
+                    if (e.key == "Enter") {
+                        $(".bx-search").click();
+                    } else {
+                        handleLiveSearch();
+                    }
+                });
+
+                $(".bx-search").click(handleBookSearch);
+
+                $(".close").click(resetBookSearch);
+
+                $("#sort").change(handleSortChange);
+
+                $.ajax({
+                    url: "php/getBooks.php",
+                    method: "GET",
+                    data: { sort: $("#sort").val() },
+                    success: addCard,
+                });
+                $.ajax({
+                    url: "php/getBooks.php",
+                    method: "GET",
+                    data: { sort: "id" },
+                    success: slideShow,
+                });
+
+                let test = true;
+                $("#reg").click(function () {
+                    if ($("#title").val().length < 3 || !$("#title").val()) {
+                        $("#title").focus();
+                        shake($("#title"));
+                    } else if (
+                        $("#author").val().length < 3 ||
+                        !$("#author").val()
+                    ) {
+                        $("#author").focus();
+                        shake($("#author"));
+                    } else if (!$("#year").val()) {
+                        $("#year").focus();
+                        shake($("#year"));
+                    } else if (test) {
+                        let formData = new FormData();
+                        formData.append("title", $("#title").val());
+                        formData.append("author", $("#author").val());
+                        formData.append("year", $("#year").val());
+
+                        let imageFile = $("#pic")[0].files[0];
+                        if (imageFile) {
+                            formData.append("image", imageFile);
+                        }
+
+                        $.ajax({
+                            url: "php/addBook.php",
+                            method: "POST",
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                                test = false;
+                                if (data == 1) {
+                                    $(".holder .box input").each(function () {
+                                        shake($(this));
+                                    });
+                                    $(".status").html("Book already exists!");
+                                } else if (data == 2) {
+                                    $(".status").html(
+                                        "Registered successfully!"
+                                    );
+                                    $.ajax({
+                                        url: "php/getBooks.php",
+                                        method: "GET",
+                                        data: { sort: $("#sort").val() },
+                                        success: addCard,
+                                    });
+                                } else if (JSON.parse(data).err == 3) {
+                                    $(".status").html(JSON.parse(data).res);
+                                }
+                                $(".status").addClass("show");
+                                setTimeout(() => {
+                                    test = true;
+                                    $(".status").removeClass("show");
+                                }, 2000);
+                            },
+                        });
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
